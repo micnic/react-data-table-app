@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DataContext from '../context';
 import logo from '../logo.svg';
-import './App.css';
+import './App.scss';
 
 class App extends Component {
 
@@ -30,7 +30,7 @@ class App extends Component {
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>Id</th>
+                      <th className="arrow-down">Id</th>
                       <th data-column="first_name" onClick={sortBy}>First Name</th>
                       <th data-column="last_name" onClick={sortBy}>Last Name</th>
                       <th data-column="email" onClick={sortBy}>E-mail</th>
