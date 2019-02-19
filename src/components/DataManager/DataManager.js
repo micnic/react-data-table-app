@@ -12,7 +12,13 @@ export default class DataManager extends Component {
     editedEntry: null,
     lastSortedColumn: 'id',
     sortedAscendent: true,
-    paginationIndex: 0
+    paginationIndex: 0,
+
+    first_name: '',
+    last_name: '',
+    email: '',
+    gender: '',
+    ip_address: ''
   };
 
   render() {
@@ -26,6 +32,13 @@ export default class DataManager extends Component {
       goToPage,
       deleteEntry,
       editEntry,
+      saveEntry,
+      cancelEdit,
+      editFirstName,
+      editLastName,
+      editEmail,
+      editGender,
+      editIpAddress,
       props: { pageItems } } = this;
 
     return (
@@ -38,7 +51,14 @@ export default class DataManager extends Component {
         goNextPage,
         goToPage,
         deleteEntry,
-        editEntry
+        editEntry,
+        saveEntry,
+        cancelEdit,
+        editFirstName,
+        editLastName,
+        editEmail,
+        editGender,
+        editIpAddress
       }}>
         {this.props.children}
       </DataContext.Provider>
@@ -118,14 +138,23 @@ export default class DataManager extends Component {
 
     this.setState({
       edit: true,
-      editedEntry: entry
+      editedEntry: entry,
+      first_name: entry.first_name,
+      last_name: entry.last_name,
+      email: entry.email,
+      gender: entry.gender,
+      ip_address: entry.ip_address
     });
   };
 
   saveEntry = (id) => {
 
     const newData = this.state.data.slice(0);
+    const { first_name, last_name, email, gender, ip_address } = this.state;
     const entry = newData.find((entry) => (entry.id === id));
+    const newEntry = { ...entry, first_name, last_name, email, gender, ip_address };
+
+    newData.splice(newData.findIndex((entry) => (entry.id === id)), 1, newEntry);
 
     this.setState({
       edit: false,
@@ -133,4 +162,42 @@ export default class DataManager extends Component {
       data: newData
     });
   };
+
+  cancelEdit = () => {
+
+    this.setState({
+      edit: false,
+      editedEntry: null
+    });
+  };
+
+  editFirstName = (first_name) => {
+    this.setState({
+      first_name
+    });
+  }
+
+  editLastName = (last_name) => {
+    this.setState({
+      last_name
+    });
+  }
+
+  editEmail = (email) => {
+    this.setState({
+      email
+    });
+  }
+
+  editGender = (gender) => {
+    this.setState({
+      gender
+    });
+  }
+
+  editIpAddress = (ip_address) => {
+    this.setState({
+      ip_address
+    });
+  }
 }
