@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import DataContext from '../../context';
+import { EditorContext } from '../../context';
 
 export default class TableRowEditor extends Component {
 
-  static contextType = DataContext;
+  static contextType = EditorContext;
 
   render() {
 

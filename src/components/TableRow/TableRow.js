@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TableRowEditor from '../TableRowEditor/TableRowEditor';
-import DataContext from '../../context';
+import { DataContext } from '../../context';
+import EditorManager from '../EditorManager/EditorManager';
 
 export default class TableRow extends Component {
 
@@ -15,7 +16,9 @@ export default class TableRow extends Component {
       <tr key={entry.id}>
         <td>{entry.id}</td>
         { (edit && editedEntry === entry) ? (
-          <TableRowEditor entry={entry} />
+          <EditorManager entry={entry}>
+            <TableRowEditor entry={entry} />
+          </EditorManager>
         ) : (
           <>
             <td>{entry.first_name}</td>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import DataContext from '../../context';
+import { DataContext } from '../../context';
 
 const toggleArrow = (lastSortedColumn, column, ascendent) => classNames({
   'arrow-down': (lastSortedColumn === column && ascendent),
@@ -13,7 +13,7 @@ export default class TableHead extends Component {
 
   render() {
 
-    const { lastSortedColumn, sortedAscendent, sortBy } = this.context;
+    const { sortBy, context: { lastSortedColumn, sortedAscendent } } = this;
 
     return (
 
@@ -29,5 +29,9 @@ export default class TableHead extends Component {
         </tr>
       </thead>
     );
+  }
+
+  sortBy = (event) => {
+    this.context.sortBy(event.target.dataset.column);
   }
 }

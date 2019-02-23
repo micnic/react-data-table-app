@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DataContext from '../../context';
+import { DataContext } from '../../context';
 import PaginationInput from './PaginationInput';
 
 export default class TableControls extends Component {

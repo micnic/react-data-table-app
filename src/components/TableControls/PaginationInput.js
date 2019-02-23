@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DataContext from '../../context';
+import { DataContext } from '../../context';
 
 export default class PaginationInput extends Component {
 

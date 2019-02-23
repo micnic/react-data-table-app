@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DataContext from '../../context';
+import { DataContext } from '../../context';
 import data from '../../MOCK_DATA.json';
 
 const pageItems = 10;
@@ -8,17 +8,12 @@ export default class DataManager extends Component {
 
   state = {
     data,
+    originalData: data,
     edit: false,
     editedEntry: null,
     lastSortedColumn: 'id',
     sortedAscendent: true,
-    paginationIndex: 0,
-
-    first_name: '',
-    last_name: '',
-    email: '',
-    gender: '',
-    ip_address: ''
+    paginationIndex: 0
   };
 
   render() {
@@ -27,6 +22,7 @@ export default class DataManager extends Component {
       state,
       getMaxPageIndex,
       sortBy,
+      filterBy,
       goPrevPage,
       goNextPage,
       goToPage,
@@ -34,11 +30,6 @@ export default class DataManager extends Component {
       editEntry,
       saveEntry,
       cancelEdit,
-      editFirstName,
-      editLastName,
-      editEmail,
-      editGender,
-      editIpAddress,
       props: { pageItems } } = this;
 
     return (
@@ -47,18 +38,14 @@ export default class DataManager extends Component {
         pageItems,
         getMaxPageIndex,
         sortBy,
+        filterBy,
         goPrevPage,
         goNextPage,
         goToPage,
         deleteEntry,
         editEntry,
         saveEntry,
-        cancelEdit,
-        editFirstName,
-        editLastName,
-        editEmail,
-        editGender,
-        editIpAddress
+        cancelEdit
       }}>
         {this.props.children}
       </DataContext.Provider>
@@ -72,10 +59,9 @@ export default class DataManager extends Component {
     return Math.ceil((dataLength / pageItems) - 1) * pageItems;
   }
 
-  sortBy = (event) => {
+  sortBy = (column) => {
 
-    const column = event.target.dataset.column;
-    const newData = this.state.data.slice(0);
+    const newData = this.state.originalData.slice(0);
     const ascendent = (column !== this.state.lastSortedColumn) || !this.state.sortedAscendent;
 
     if (column === 'id') {
@@ -103,6 +89,27 @@ export default class DataManager extends Component {
     });
   }
 
+  filterBy = ({ first_name, last_name, email, gender, ip_address }) => {
+
+    const fnRex = RegExp(first_name.split('').join('.*'), 'i');
+    const lnRex = RegExp(last_name.split('').join('.*'), 'i');
+    const emRex = RegExp(email.split('').join('.*'), 'i');
+    const gnRex = RegExp(gender.split('').join('.*'), 'i');
+    const ipRex = RegExp(ip_address.split('').join('.*'), 'i');
+
+    const newData = this.state.originalData.filter((entry) => (
+      fnRex.test(entry.first_name) &&
+      lnRex.test(entry.last_name) &&
+      emRex.test(entry.email) &&
+      gnRex.test(entry.gender) &&
+      ipRex.test(entry.ip_address)
+    ));
+
+    this.setState({
+      data: newData
+    });
+  }
+
   goPrevPage = () => {
     this.setState(({ paginationIndex }) => ({
       paginationIndex: Math.max(paginationIndex - this.props.pageItems, 0)
@@ -123,43 +130,41 @@ export default class DataManager extends Component {
 
   deleteEntry = (id) => {
 
-    const newData = this.state.data.slice(0);
+    const newData = this.state.originalData.slice(0);
 
     newData.splice(newData.findIndex((entry) => (entry.id === id)), 1);
 
     this.setState({
-      data: newData
+      data: newData,
+      originalData: newData
     });
   };
 
   editEntry = (id) => {
 
-    const entry = this.state.data.find((entry) => (entry.id === id));
+    const entry = this.state.originalData.find((entry) => (entry.id === id));
 
     this.setState({
       edit: true,
-      editedEntry: entry,
-      first_name: entry.first_name,
-      last_name: entry.last_name,
-      email: entry.email,
-      gender: entry.gender,
-      ip_address: entry.ip_address
+      editedEntry: entry
     });
   };
 
-  saveEntry = (id) => {
+  saveEntry = (entryData) => {
 
+    const newOriginalData = this.state.originalData.slice(0);
     const newData = this.state.data.slice(0);
-    const { first_name, last_name, email, gender, ip_address } = this.state;
-    const entry = newData.find((entry) => (entry.id === id));
-    const newEntry = { ...entry, first_name, last_name, email, gender, ip_address };
+    const { editedEntry } = this.state;
+    const newEntry = { ...editedEntry, ...entryData };
 
-    newData.splice(newData.findIndex((entry) => (entry.id === id)), 1, newEntry);
+    newOriginalData.splice(newOriginalData.findIndex((entry) => (entry === editedEntry)), 1, newEntry);
+    newData.splice(newData.findIndex((entry) => (entry === editedEntry)), 1, newEntry);
 
     this.setState({
       edit: false,
       editedEntry: null,
-      data: newData
+      data: newData,
+      originalData: newOriginalData,
     });
   };
 
@@ -170,34 +175,4 @@ export default class DataManager extends Component {
       editedEntry: null
     });
   };
-
-  editFirstName = (first_name) => {
-    this.setState({
-      first_name
-    });
-  }
-
-  editLastName = (last_name) => {
-    this.setState({
-      last_name
-    });
-  }
-
-  editEmail = (email) => {
-    this.setState({
-      email
-    });
-  }
-
-  editGender = (gender) => {
-    this.setState({
-      gender
-    });
-  }
-
-  editIpAddress = (ip_address) => {
-    this.setState({
-      ip_address
-    });
-  }
 }
