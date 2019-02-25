@@ -26,7 +26,10 @@ export default class DataManager extends Component {
       goPrevPage,
       goNextPage,
       goToPage,
+      goToLastPage,
+      addEntry,
       deleteEntry,
+      moveEntry,
       editEntry,
       saveEntry,
       cancelEdit,
@@ -42,7 +45,10 @@ export default class DataManager extends Component {
         goPrevPage,
         goNextPage,
         goToPage,
+        goToLastPage,
+        addEntry,
         deleteEntry,
+        moveEntry,
         editEntry,
         saveEntry,
         cancelEdit
@@ -57,7 +63,7 @@ export default class DataManager extends Component {
     const { length: dataLength } = this.state.data;
 
     return Math.ceil((dataLength / pageItems) - 1) * pageItems;
-  }
+  };
 
   sortBy = (column) => {
 
@@ -87,7 +93,7 @@ export default class DataManager extends Component {
       sortedAscendent: ascendent,
       data: newData
     });
-  }
+  };
 
   filterBy = ({ first_name, last_name, email, gender, ip_address }) => {
 
@@ -108,25 +114,63 @@ export default class DataManager extends Component {
     this.setState({
       data: newData
     });
-  }
+  };
 
   goPrevPage = () => {
     this.setState(({ paginationIndex }) => ({
       paginationIndex: Math.max(paginationIndex - this.props.pageItems, 0)
     }));
-  }
+  };
 
   goNextPage = () => {
     this.setState(({ paginationIndex }) => ({
       paginationIndex: Math.min(paginationIndex + this.props.pageItems, this.getMaxPageIndex())
     }));
-  }
+  };
 
   goToPage = (pageIndex) => {
     this.setState({
       paginationIndex: pageIndex * this.props.pageItems
     });
-  }
+  };
+
+  goToLastPage = () => {
+    this.setState({
+      paginationIndex: this.getMaxPageIndex()
+    });
+  };
+
+  addEntry = (callback) => {
+
+    const newData = this.state.originalData.slice(0);
+
+    const maxId = newData.reduce((result, entry) => {
+
+      if (entry.id > result) {
+        result = entry.id;
+      }
+
+      return result;
+    }, newData[0].id);
+
+    const newEntry = {
+      id: maxId + 1,
+      first_name: '',
+      last_name: '',
+      email: '',
+      gender: '',
+      ip_address: ''
+    };
+
+    newData.push(newEntry);
+
+    this.setState({
+      data: newData,
+      originalData: newData
+    }, callback);
+
+    return newEntry;
+  };
 
   deleteEntry = (id) => {
 
@@ -137,6 +181,17 @@ export default class DataManager extends Component {
     this.setState({
       data: newData,
       originalData: newData
+    });
+  };
+
+  moveEntry = (fromIndex, toIndex) => {
+
+    const newData = this.state.data.slice(0);
+
+    newData.splice(toIndex, 0, ...newData.splice(fromIndex, 1));
+
+    this.setState({
+      data: newData
     });
   };
 

@@ -14,7 +14,7 @@ export default class TableRow extends Component {
 
     return (
       <tr key={entry.id}>
-        <td>{entry.id}</td>
+        <td data-index={this.props.index} onMouseDown={this.props.onMouseDown} onMouseUp={this.props.onMouseUp}>{entry.id}</td>
         { (edit && editedEntry === entry) ? (
           <EditorManager entry={entry}>
             <TableRowEditor entry={entry} />

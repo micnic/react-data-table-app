@@ -5,6 +5,7 @@ import TableControls from './TableControls/TableControls';
 import DataManager from './DataManager/DataManager';
 import logo from '../logo.svg';
 import './App.scss';
+import AddEntryButton from './AddEntryButton/AddEntryButton';
 
 class App extends Component {
 
@@ -19,6 +20,7 @@ class App extends Component {
               <TableHead/>
               <TableBody/>
             </table>
+            <AddEntryButton/>
             <TableControls/>
           </header>
         </div>
